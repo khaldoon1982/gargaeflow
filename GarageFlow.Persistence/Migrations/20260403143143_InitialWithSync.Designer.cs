@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageFlow.Persistence.Migrations
 {
     [DbContext(typeof(GarageFlowDbContext))]
-    [Migration("20260402222511_FullRedesign")]
-    partial class FullRedesign
+    [Migration("20260403143143_InitialWithSync")]
+    partial class InitialWithSync
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,6 +108,9 @@ namespace GarageFlow.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("CloudId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("CompanyName")
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
@@ -139,6 +142,10 @@ namespace GarageFlow.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Email")
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
@@ -168,8 +175,14 @@ namespace GarageFlow.Persistence.Migrations
                     b.Property<DateTime?>("LastActivityAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("LastLocalChangeAtUtc")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("LastName")
                         .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LastSyncedAtUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
@@ -195,6 +208,11 @@ namespace GarageFlow.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("SyncStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1);
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
@@ -202,16 +220,26 @@ namespace GarageFlow.Persistence.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("VersionNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1);
+
                     b.Property<string>("WhatsAppNumber")
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CloudId")
+                        .IsUnique();
+
                     b.HasIndex("CustomerNumber")
                         .IsUnique();
 
                     b.HasIndex("PhoneNumber");
+
+                    b.HasIndex("SyncStatus");
 
                     b.ToTable("Customers");
                 });
@@ -222,7 +250,14 @@ namespace GarageFlow.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<Guid>("CloudId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ExpiryDate")
@@ -237,6 +272,12 @@ namespace GarageFlow.Persistence.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime?>("LastLocalChangeAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LastSyncedAtUtc")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
@@ -247,15 +288,30 @@ namespace GarageFlow.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("SyncStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1);
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("VersionNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1);
+
                     b.HasKey("Id");
 
+                    b.HasIndex("CloudId")
+                        .IsUnique();
+
                     b.HasIndex("ExpiryDate");
+
+                    b.HasIndex("SyncStatus");
 
                     b.HasIndex("VehicleId");
 
@@ -268,6 +324,9 @@ namespace GarageFlow.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<Guid>("CloudId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
@@ -276,11 +335,21 @@ namespace GarageFlow.Persistence.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("LaborCost")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("LastLocalChangeAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LastSyncedAtUtc")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("MileageAtService")
                         .HasColumnType("INTEGER");
@@ -313,6 +382,11 @@ namespace GarageFlow.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("SyncStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1);
+
                     b.Property<string>("TechnicianName")
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
@@ -326,9 +400,19 @@ namespace GarageFlow.Persistence.Migrations
                     b.Property<int>("VehicleId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("VersionNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1);
+
                     b.HasKey("Id");
 
+                    b.HasIndex("CloudId")
+                        .IsUnique();
+
                     b.HasIndex("ServiceDate");
+
+                    b.HasIndex("SyncStatus");
 
                     b.HasIndex("VehicleId");
 
@@ -384,17 +468,30 @@ namespace GarageFlow.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<Guid>("CloudId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsSent")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("LastLocalChangeAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LastSyncedAtUtc")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -416,21 +513,78 @@ namespace GarageFlow.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("SyncStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1);
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("VehicleId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("VersionNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1);
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CloudId")
+                        .IsUnique();
 
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("ReminderDate");
 
+                    b.HasIndex("SyncStatus");
+
                     b.HasIndex("VehicleId");
 
                     b.ToTable("Reminders");
+                });
+
+            modelBuilder.Entity("GarageFlow.Domain.Entities.SyncQueueEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("OperationType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("ProcessedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntityName", "EntityId");
+
+                    b.HasIndex("Status", "CreatedAtUtc");
+
+                    b.ToTable("SyncQueue");
                 });
 
             modelBuilder.Entity("GarageFlow.Domain.Entities.User", b =>
@@ -488,6 +642,9 @@ namespace GarageFlow.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("CloudId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Color")
                         .HasMaxLength(30)
                         .HasColumnType("TEXT");
@@ -497,6 +654,10 @@ namespace GarageFlow.Persistence.Migrations
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("EngineNumber")
                         .HasMaxLength(50)
@@ -517,7 +678,13 @@ namespace GarageFlow.Persistence.Migrations
                     b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime?>("LastLocalChangeAtUtc")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime?>("LastServiceDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LastSyncedAtUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Mileage")
@@ -545,6 +712,11 @@ namespace GarageFlow.Persistence.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("SyncStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1);
+
                     b.Property<int>("TransmissionType")
                         .HasColumnType("INTEGER");
 
@@ -559,6 +731,11 @@ namespace GarageFlow.Persistence.Migrations
                         .HasMaxLength(17)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("VersionNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1);
+
                     b.Property<int>("Year")
                         .HasColumnType("INTEGER");
 
@@ -566,9 +743,14 @@ namespace GarageFlow.Persistence.Migrations
 
                     b.HasIndex("ChassisNumber");
 
+                    b.HasIndex("CloudId")
+                        .IsUnique();
+
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("PlateNumberNormalized");
+
+                    b.HasIndex("SyncStatus");
 
                     b.ToTable("Vehicles");
                 });

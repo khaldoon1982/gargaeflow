@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GarageFlow.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class FullRedesign : Migration
+    public partial class InitialWithSync : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -60,12 +60,38 @@ namespace GarageFlow.Persistence.Migrations
                     IsArchived = table.Column<bool>(type: "INTEGER", nullable: false),
                     LastActivityAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CloudId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    SyncStatus = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
+                    LastSyncedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    LastLocalChangeAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    VersionNumber = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
+                    DeviceId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SyncQueue",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    EntityName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    EntityId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OperationType = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    RetryCount = table.Column<int>(type: "INTEGER", nullable: false),
+                    ErrorMessage = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    ProcessedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SyncQueue", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -113,6 +139,12 @@ namespace GarageFlow.Persistence.Migrations
                     Notes = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
                     IsArchived = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CloudId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    SyncStatus = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
+                    LastSyncedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    LastLocalChangeAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    VersionNumber = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
+                    DeviceId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
                     CustomerId = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
@@ -166,6 +198,12 @@ namespace GarageFlow.Persistence.Migrations
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
                     Notes = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CloudId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    SyncStatus = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
+                    LastSyncedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    LastLocalChangeAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    VersionNumber = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
+                    DeviceId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
                     VehicleId = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
@@ -201,6 +239,12 @@ namespace GarageFlow.Persistence.Migrations
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
                     Notes = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CloudId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    SyncStatus = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
+                    LastSyncedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    LastLocalChangeAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    VersionNumber = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
+                    DeviceId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
                     VehicleId = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
@@ -230,6 +274,12 @@ namespace GarageFlow.Persistence.Migrations
                     SentAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CloudId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    SyncStatus = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
+                    LastSyncedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    LastLocalChangeAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    VersionNumber = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
+                    DeviceId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
                     CustomerId = table.Column<int>(type: "INTEGER", nullable: false),
                     VehicleId = table.Column<int>(type: "INTEGER", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -291,6 +341,12 @@ namespace GarageFlow.Persistence.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Customers_CloudId",
+                table: "Customers",
+                column: "CloudId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Customers_CustomerNumber",
                 table: "Customers",
                 column: "CustomerNumber",
@@ -302,9 +358,25 @@ namespace GarageFlow.Persistence.Migrations
                 column: "PhoneNumber");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Customers_SyncStatus",
+                table: "Customers",
+                column: "SyncStatus");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inspections_CloudId",
+                table: "Inspections",
+                column: "CloudId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Inspections_ExpiryDate",
                 table: "Inspections",
                 column: "ExpiryDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inspections_SyncStatus",
+                table: "Inspections",
+                column: "SyncStatus");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Inspections_VehicleId",
@@ -312,9 +384,20 @@ namespace GarageFlow.Persistence.Migrations
                 column: "VehicleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceRecords_CloudId",
+                table: "MaintenanceRecords",
+                column: "CloudId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MaintenanceRecords_ServiceDate",
                 table: "MaintenanceRecords",
                 column: "ServiceDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceRecords_SyncStatus",
+                table: "MaintenanceRecords",
+                column: "SyncStatus");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MaintenanceRecords_VehicleId",
@@ -327,6 +410,12 @@ namespace GarageFlow.Persistence.Migrations
                 column: "MaintenanceRecordId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reminders_CloudId",
+                table: "Reminders",
+                column: "CloudId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reminders_CustomerId",
                 table: "Reminders",
                 column: "CustomerId");
@@ -337,9 +426,24 @@ namespace GarageFlow.Persistence.Migrations
                 column: "ReminderDate");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reminders_SyncStatus",
+                table: "Reminders",
+                column: "SyncStatus");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reminders_VehicleId",
                 table: "Reminders",
                 column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SyncQueue_EntityName_EntityId",
+                table: "SyncQueue",
+                columns: new[] { "EntityName", "EntityId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SyncQueue_Status_CreatedAtUtc",
+                table: "SyncQueue",
+                columns: new[] { "Status", "CreatedAtUtc" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Username",
@@ -353,6 +457,12 @@ namespace GarageFlow.Persistence.Migrations
                 column: "ChassisNumber");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Vehicles_CloudId",
+                table: "Vehicles",
+                column: "CloudId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_CustomerId",
                 table: "Vehicles",
                 column: "CustomerId");
@@ -361,6 +471,11 @@ namespace GarageFlow.Persistence.Migrations
                 name: "IX_Vehicles_PlateNumberNormalized",
                 table: "Vehicles",
                 column: "PlateNumberNormalized");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vehicles_SyncStatus",
+                table: "Vehicles",
+                column: "SyncStatus");
         }
 
         /// <inheritdoc />
@@ -380,6 +495,9 @@ namespace GarageFlow.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reminders");
+
+            migrationBuilder.DropTable(
+                name: "SyncQueue");
 
             migrationBuilder.DropTable(
                 name: "Users");

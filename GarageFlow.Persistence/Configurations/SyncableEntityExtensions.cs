@@ -11,7 +11,6 @@ public static class SyncableEntityExtensions
     {
         builder.Property(e => e.CloudId).IsRequired();
         builder.HasIndex(e => e.CloudId).IsUnique();
-        builder.Property(e => e.SyncStatus).HasDefaultValue(SyncStatus.PendingUpload);
         builder.Property(e => e.VersionNumber).HasDefaultValue(1);
         builder.Property(e => e.DeviceId).HasMaxLength(50);
         builder.HasIndex(e => e.SyncStatus);

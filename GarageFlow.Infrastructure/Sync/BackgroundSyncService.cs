@@ -1,4 +1,5 @@
 using GarageFlow.Application.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
@@ -6,16 +7,16 @@ namespace GarageFlow.Infrastructure.Sync;
 
 public class BackgroundSyncService : IHostedService, IDisposable
 {
-    private readonly ISyncService _syncService;
+    private readonly IServiceProvider _serviceProvider;
     private readonly SyncConfiguration _config;
     private readonly ILogger _logger;
     private PeriodicTimer? _timer;
     private CancellationTokenSource? _cts;
     private Task? _executingTask;
 
-    public BackgroundSyncService(ISyncService syncService, SyncConfiguration config, ILogger logger)
+    public BackgroundSyncService(IServiceProvider serviceProvider, SyncConfiguration config, ILogger logger)
     {
-        _syncService = syncService;
+        _serviceProvider = serviceProvider;
         _config = config;
         _logger = logger;
     }
@@ -40,14 +41,15 @@ public class BackgroundSyncService : IHostedService, IDisposable
 
     private async Task RunAsync(CancellationToken ct)
     {
-        // Initial delay to let the app fully start
         await Task.Delay(TimeSpan.FromSeconds(5), ct);
 
         while (await _timer!.WaitForNextTickAsync(ct))
         {
             try
             {
-                await _syncService.SyncAsync(ct);
+                using var scope = _serviceProvider.CreateScope();
+                var syncService = scope.ServiceProvider.GetRequiredService<ISyncService>();
+                await syncService.SyncAsync(ct);
             }
             catch (OperationCanceledException) when (ct.IsCancellationRequested)
             {
@@ -64,9 +66,7 @@ public class BackgroundSyncService : IHostedService, IDisposable
     {
         _cts?.Cancel();
         if (_executingTask is not null)
-        {
             await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
-        }
         _logger.Information("Background sync gestopt");
     }
 
