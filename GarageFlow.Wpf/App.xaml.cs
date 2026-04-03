@@ -16,26 +16,29 @@ namespace GarageFlow.Wpf;
 
 public partial class App : System.Windows.Application
 {
-    private readonly IHost _host;
+    private IHost? _host;
     private static readonly string DbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "garageflow.db");
 
-    public App()
+    protected override void OnStartup(StartupEventArgs e)
     {
+        base.OnStartup(e);
+
+        // Load env FAST — no heavy I/O
         var envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env.local");
         if (!File.Exists(envPath))
             envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env.local");
         if (File.Exists(envPath))
             DotNetEnv.Env.Load(envPath);
 
-        _host = Host.CreateDefaultBuilder()
-            .UseSerilog((context, config) =>
+        // Minimal host — no appsettings, no env provider, no user secrets
+        _host = new HostBuilder()
+            .UseSerilog((_, config) =>
             {
-                config
-                    .MinimumLevel.Information()
+                config.MinimumLevel.Information()
                     .WriteTo.Console()
                     .WriteTo.File("logs/garageflow-.log", rollingInterval: RollingInterval.Day);
             })
-            .ConfigureServices((context, services) =>
+            .ConfigureServices(services =>
             {
                 services.AddApplication();
                 services.AddPersistence($"Data Source={DbPath}");
@@ -56,34 +59,41 @@ public partial class App : System.Windows.Application
                 services.AddTransient<MainWindow>();
             })
             .Build();
-    }
 
-    protected override async void OnStartup(StartupEventArgs e)
-    {
-        // Show login window IMMEDIATELY — don't block on host/db
+        // Show login IMMEDIATELY
         var loginWindow = _host.Services.GetRequiredService<LoginWindow>();
         loginWindow.Show();
 
-        base.OnStartup(e);
+        // Start host + DB init in background — doesn't block the UI
+        _ = InitializeAsync();
+    }
 
-        // Heavy work in background — user sees the login screen instantly
-        await Task.Run(async () =>
+    private async Task InitializeAsync()
+    {
+        try
         {
-            await _host.StartAsync();
+            await _host!.StartAsync();
 
             using var scope = _host.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<GarageFlowDbContext>();
             var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
             await DatabaseSeeder.SeedAsync(dbContext, hasher.Hash);
-        });
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Initialisatie mislukt");
+        }
     }
 
     protected override async void OnExit(ExitEventArgs e)
     {
-        await _host.StopAsync();
-        _host.Dispose();
+        if (_host is not null)
+        {
+            await _host.StopAsync(TimeSpan.FromSeconds(3));
+            _host.Dispose();
+        }
         base.OnExit(e);
     }
 
-    public static IHost GetHost() => ((App)Current)._host;
+    public static IHost GetHost() => ((App)Current)._host!;
 }
