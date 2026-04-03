@@ -1,0 +1,37 @@
+<Window x:Class="GarageFlow.Wpf.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="GarageFlow - Inloggen" Height="450" Width="400"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="{StaticResource BackgroundBrush}">
+    <Grid VerticalAlignment="Center" Margin="40">
+        <StackPanel>
+            <TextBlock Text="GarageFlow" FontSize="32" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"
+                       HorizontalAlignment="Center" Margin="0,0,0,8"/>
+            <TextBlock Text="Garagebeheer Systeem" FontSize="14" Foreground="{StaticResource SubtextBrush}"
+                       HorizontalAlignment="Center" Margin="0,0,0,32"/>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <Label Content="Gebruikersnaam"/>
+                    <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                    <Label Content="Wachtwoord"/>
+                    <PasswordBox x:Name="PasswordBox" Margin="0,0,0,16" Padding="10,8" FontSize="13"
+                                 BorderBrush="{StaticResource BorderBrush}"/>
+
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}"
+                               Margin="0,0,0,12" TextWrapping="Wrap" FontSize="12"/>
+
+                    <Button Content="Inloggen" Command="{Binding LoginCommand}"
+                            Style="{StaticResource PrimaryButton}" HorizontalAlignment="Stretch"
+                            IsEnabled="{Binding IsLoggingIn, Converter={StaticResource InvertBoolConverter}}"
+                            Click="LoginButton_Click"/>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Standaard: admin / admin123" FontSize="11" Foreground="{StaticResource SubtextBrush}"
+                       HorizontalAlignment="Center" Margin="0,16,0,0"/>
+        </StackPanel>
+    </Grid>
+</Window>

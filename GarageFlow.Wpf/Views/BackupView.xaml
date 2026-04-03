@@ -1,0 +1,25 @@
+<UserControl x:Class="GarageFlow.Wpf.Views.BackupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel MaxWidth="500" VerticalAlignment="Top">
+        <TextBlock Text="Back-up / Herstellen" FontSize="26" FontWeight="Bold" Margin="0,0,0,20"/>
+
+        <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Back-up aanmaken" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                <TextBlock Text="Maak een kopie van de database aan. Het bestand wordt opgeslagen in de back-up map." TextWrapping="Wrap" Foreground="{StaticResource SubtextBrush}" Margin="0,0,0,12"/>
+                <Button Content="Back-up aanmaken" Command="{Binding CreateBackupCommand}" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left" IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolConverter}}"/>
+            </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Back-up herstellen" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                <TextBlock Text="Herstel de database vanuit een eerder gemaakte back-up. De huidige database wordt overschreven." TextWrapping="Wrap" Foreground="{StaticResource SubtextBrush}" Margin="0,0,0,12"/>
+                <Button Content="Herstellen..." Command="{Binding RestoreBackupCommand}" Style="{StaticResource DangerButton}" HorizontalAlignment="Left" IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolConverter}}"/>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" FontWeight="SemiBold" Foreground="{StaticResource InfoBrush}" Margin="0,8,0,0"/>
+    </StackPanel>
+</UserControl>

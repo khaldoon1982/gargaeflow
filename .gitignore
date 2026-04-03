@@ -1,0 +1,27 @@
+# Environment files (sensitive credentials)
+.env.local
+.env.production
+.env
+
+# Build output
+bin/
+obj/
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+logs/
+
+# IDE
+.vs/
+*.user
+*.suo
+
+# Backups
+backups/
+
+# Claude Code
+.claude/

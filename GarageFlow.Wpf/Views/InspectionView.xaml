@@ -1,0 +1,42 @@
+<UserControl x:Class="GarageFlow.Wpf.Views.InspectionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Keuringen" FontSize="26" FontWeight="Bold" Margin="0,0,0,16"/>
+
+        <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,8,8"><Label Content="Type keuring"/><ComboBox ItemsSource="{Binding InspectionTypes}" SelectedItem="{Binding InspectionType}"/></StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,8,8"><Label Content="Keuringsdatum"/><DatePicker SelectedDate="{Binding InspectionDate}"/></StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,8"><Label Content="Vervaldatum"/><DatePicker SelectedDate="{Binding ExpiryDate}"/></StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,8,8"><Label Content="Voertuig *"/><ComboBox ItemsSource="{Binding Vehicles}" SelectedValue="{Binding SelectedVehicleId}" SelectedValuePath="Id" DisplayMemberPath="PlateNumberOriginal"/></StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,8,8"><Label Content="Status"/><ComboBox ItemsSource="{Binding Statuses}" SelectedItem="{Binding Status}" IsEnabled="{Binding IsEditing}"/></StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,8"><Label Content="Notities"/><TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+
+                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,8,0,0">
+                    <Button Content="{Binding IsEditing, Converter={StaticResource BoolToSaveTextConverter}}" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0"/>
+                    <Button Content="Bewerken" Command="{Binding EditCommand}" Style="{StaticResource AccentButton}" Margin="0,0,8,0"/>
+                    <Button Content="Verwijderen" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}" Margin="0,0,8,0"/>
+                    <Button Content="Annuleren" Command="{Binding ClearFormCommand}" Style="{StaticResource PrimaryButton}"/>
+                </StackPanel>
+                <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" Margin="0,4,0,0"/>
+            </Grid>
+        </Border>
+
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Inspections}" SelectedItem="{Binding SelectedInspection}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Kenteken" Binding="{Binding VehiclePlate}" Width="100"/>
+                <DataGridTextColumn Header="Klant" Binding="{Binding CustomerName}" Width="*"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding InspectionType}" Width="100"/>
+                <DataGridTextColumn Header="Keuringsdatum" Binding="{Binding InspectionDate, StringFormat=dd-MM-yyyy}" Width="110"/>
+                <DataGridTextColumn Header="Vervaldatum" Binding="{Binding ExpiryDate, StringFormat=dd-MM-yyyy}" Width="110"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

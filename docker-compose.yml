@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  garageflow-postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: garageflow
+      POSTGRES_USER: garageflow_user
+      POSTGRES_PASSWORD: dev-password-change-me
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  garageflow-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5001:8080"
+    environment:
+      - ConnectionStrings__Default=Host=garageflow-postgres;Port=5432;Database=garageflow;Username=garageflow_user;Password=dev-password-change-me
+      - GARAGEFLOW_API_KEY=dev-api-key
+      - GARAGEFLOW_LOG_LEVEL=Information
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - garageflow-postgres
+
+volumes:
+  pgdata:

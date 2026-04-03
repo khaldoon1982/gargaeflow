@@ -1,0 +1,78 @@
+<UserControl x:Class="GarageFlow.Wpf.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <TextBlock Text="Dashboard" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,20"/>
+
+            <!-- Stat Cards -->
+            <WrapPanel Margin="0,0,0,20">
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,12">
+                    <StackPanel>
+                        <TextBlock Text="Totaal klanten" FontSize="12" Foreground="{StaticResource SubtextBrush}"/>
+                        <TextBlock Text="{Binding TotalCustomers}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,12">
+                    <StackPanel>
+                        <TextBlock Text="Totaal voertuigen" FontSize="12" Foreground="{StaticResource SubtextBrush}"/>
+                        <TextBlock Text="{Binding TotalVehicles}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource InfoBrush}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,12">
+                    <StackPanel>
+                        <TextBlock Text="Onderhoud deze maand" FontSize="12" Foreground="{StaticResource SubtextBrush}"/>
+                        <TextBlock Text="{Binding MaintenanceThisMonth}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource AccentBrush}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,12">
+                    <StackPanel>
+                        <TextBlock Text="Keuringen binnen 7 dagen" FontSize="12" Foreground="{StaticResource SubtextBrush}"/>
+                        <TextBlock Text="{Binding InspectionsDueIn7Days}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource WarningBrush}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,12">
+                    <StackPanel>
+                        <TextBlock Text="Verlopen keuringen" FontSize="12" Foreground="{StaticResource SubtextBrush}"/>
+                        <TextBlock Text="{Binding ExpiredInspections}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource DangerBrush}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,12">
+                    <StackPanel>
+                        <TextBlock Text="Openstaande herinneringen" FontSize="12" Foreground="{StaticResource SubtextBrush}"/>
+                        <TextBlock Text="{Binding OpenReminders}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource WarningBrush}"/>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
+
+            <!-- Recent Maintenance -->
+            <TextBlock Text="Recente onderhoudsregistraties" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+            <Border Style="{StaticResource Card}" Margin="0,0,0,20">
+                <DataGrid ItemsSource="{Binding RecentMaintenance}" MaxHeight="250">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Kenteken" Binding="{Binding VehiclePlate}" Width="100"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding ServiceType}" Width="120"/>
+                        <DataGridTextColumn Header="Beschrijving" Binding="{Binding Description}" Width="*"/>
+                        <DataGridTextColumn Header="Datum" Binding="{Binding ServiceDate, StringFormat=dd-MM-yyyy}" Width="100"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                        <DataGridTextColumn Header="Kosten" Binding="{Binding TotalCost, StringFormat=€{0:F2}}" Width="80"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- Upcoming Inspections -->
+            <TextBlock Text="Aankomende keuringen" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+            <Border Style="{StaticResource Card}">
+                <DataGrid ItemsSource="{Binding UpcomingInspections}" MaxHeight="200">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Kenteken" Binding="{Binding VehiclePlate}" Width="100"/>
+                        <DataGridTextColumn Header="Klant" Binding="{Binding CustomerName}" Width="*"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding InspectionType}" Width="100"/>
+                        <DataGridTextColumn Header="Vervaldatum" Binding="{Binding ExpiryDate, StringFormat=dd-MM-yyyy}" Width="110"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
