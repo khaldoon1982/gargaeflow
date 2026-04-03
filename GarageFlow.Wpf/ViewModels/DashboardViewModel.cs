@@ -36,6 +36,10 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty] private string _searchQuery = string.Empty;
     [ObservableProperty] private ObservableCollection<SearchResultItem> _searchResults = new();
     [ObservableProperty] private bool _isSearching;
+    [ObservableProperty] private SearchResultItem? _selectedSearchResult;
+
+    /// <summary>Fired when user clicks a search result. Tuple: (type, id) e.g. ("Klant", 3)</summary>
+    public event Action<string, int>? NavigateToResult;
 
     public DashboardViewModel(IDashboardService dashboardService, IGlobalSearchService searchService)
     {
@@ -77,12 +81,25 @@ public partial class DashboardViewModel : ObservableObject
         SearchResults = new ObservableCollection<SearchResultItem>(result.Results);
     }
 
-    partial void OnSearchQueryChanged(string value)
+    // Auto-search on every keystroke after 2 chars
+    async partial void OnSearchQueryChanged(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value) || value.Length < 2)
         {
             SearchResults = new();
             IsSearching = false;
+            return;
         }
+        await Search();
+    }
+
+    partial void OnSelectedSearchResultChanged(SearchResultItem? value)
+    {
+        if (value is null) return;
+        NavigateToResult?.Invoke(value.Type, value.Id);
+        SearchQuery = string.Empty;
+        SearchResults = new();
+        IsSearching = false;
+        SelectedSearchResult = null;
     }
 }

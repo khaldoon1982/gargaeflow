@@ -25,8 +25,34 @@ public partial class MainViewModel : ObservableObject
     private async Task NavigateToDashboard()
     {
         var vm = _serviceProvider.GetRequiredService<DashboardViewModel>();
+        vm.NavigateToResult += OnSearchResultSelected;
         CurrentViewModel = vm;
         await vm.LoadDataAsync();
+    }
+
+    private async void OnSearchResultSelected(string type, int id)
+    {
+        if (type == "Klant")
+        {
+            var vm = _serviceProvider.GetRequiredService<CustomerViewModel>();
+            CurrentViewModel = vm;
+            await vm.LoadDataAsync();
+            vm.SelectedCustomer = vm.Customers.FirstOrDefault(c => c.Id == id);
+        }
+        else if (type == "Voertuig")
+        {
+            var vm = _serviceProvider.GetRequiredService<CustomerViewModel>();
+            CurrentViewModel = vm;
+            await vm.LoadDataAsync();
+            // Find which customer owns this vehicle and navigate there
+            var vehicleService = _serviceProvider.GetRequiredService<Application.Interfaces.IVehicleService>();
+            var vehicle = await vehicleService.GetByIdAsync(id);
+            if (vehicle is not null)
+            {
+                vm.SelectedCustomer = vm.Customers.FirstOrDefault(c => c.Id == vehicle.CustomerId);
+                // Switch to vehicles tab after loading
+            }
+        }
     }
 
     [RelayCommand]

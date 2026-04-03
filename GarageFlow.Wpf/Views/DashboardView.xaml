@@ -26,7 +26,7 @@
                         <Border Visibility="{Binding IsSearching, Converter={StaticResource BoolToVisibilityConverter}}"
                                 Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="0,0,6,6"
                                 MaxHeight="300" Padding="0">
-                            <ListBox ItemsSource="{Binding SearchResults}" BorderThickness="0">
+                            <ListBox ItemsSource="{Binding SearchResults}" SelectedItem="{Binding SelectedSearchResult}" BorderThickness="0" Cursor="Hand">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Margin="8,6">
@@ -36,7 +36,11 @@
                                                 </Border>
                                                 <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="13"/>
                                             </StackPanel>
-                                            <TextBlock Text="{Binding Subtitle}" FontSize="11" Foreground="{StaticResource SubtextBrush}"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Subtitle}" FontSize="11" Foreground="{StaticResource SubtextBrush}"/>
+                                                <TextBlock Text=" • " FontSize="11" Foreground="{StaticResource SubtextBrush}" Visibility="{Binding Extra, Converter={StaticResource NullToCollapsedConverter}}"/>
+                                                <TextBlock Text="{Binding Extra}" FontSize="11" Foreground="{StaticResource SubtextBrush}"/>
+                                            </StackPanel>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
