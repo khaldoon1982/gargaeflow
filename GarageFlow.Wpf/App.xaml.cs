@@ -18,19 +18,20 @@ public partial class App : System.Windows.Application
 {
     private IHost? _host;
     private static readonly string DbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "garageflow.db");
+    private static readonly TaskCompletionSource _dbReady = new();
 
-    protected override void OnStartup(StartupEventArgs e)
+    public static Task WaitForDbAsync() => _dbReady.Task;
+
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
-        // Load env FAST — no heavy I/O
         var envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env.local");
         if (!File.Exists(envPath))
             envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env.local");
         if (File.Exists(envPath))
             DotNetEnv.Env.Load(envPath);
 
-        // Minimal host — no appsettings, no env provider, no user secrets
         _host = new HostBuilder()
             .UseSerilog((_, config) =>
             {
@@ -60,29 +61,30 @@ public partial class App : System.Windows.Application
             })
             .Build();
 
-        // Show login IMMEDIATELY
+        // Show login instantly
         var loginWindow = _host.Services.GetRequiredService<LoginWindow>();
         loginWindow.Show();
 
-        // Start host + DB init in background — doesn't block the UI
-        _ = InitializeAsync();
-    }
-
-    private async Task InitializeAsync()
-    {
-        try
+        // Init DB in background — login button waits for this
+        await Task.Run(async () =>
         {
-            await _host!.StartAsync();
+            try
+            {
+                using var scope = _host.Services.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<GarageFlowDbContext>();
+                var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+                await DatabaseSeeder.SeedAsync(dbContext, hasher.Hash);
+                _dbReady.TrySetResult();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Database initialisatie mislukt");
+                _dbReady.TrySetResult(); // unblock login anyway
+            }
+        });
 
-            using var scope = _host.Services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<GarageFlowDbContext>();
-            var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-            await DatabaseSeeder.SeedAsync(dbContext, hasher.Hash);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Initialisatie mislukt");
-        }
+        // Start hosted services (sync) after DB is ready
+        _ = _host.StartAsync();
     }
 
     protected override async void OnExit(ExitEventArgs e)

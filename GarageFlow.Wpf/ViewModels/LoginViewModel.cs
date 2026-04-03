@@ -28,6 +28,12 @@ public partial class LoginViewModel : ObservableObject
             return;
         }
         IsLoggingIn = true;
+        ErrorMessage = "Even geduld, database wordt geladen...";
+
+        // Wait for DB to be ready before first login attempt
+        await App.WaitForDbAsync();
+        ErrorMessage = null;
+
         var user = await _authService.LoginAsync(Username, Password);
         IsLoggingIn = false;
         if (user is null)
