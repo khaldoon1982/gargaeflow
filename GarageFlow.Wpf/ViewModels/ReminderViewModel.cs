@@ -19,13 +19,15 @@ public partial class ReminderViewModel : ObservableObject
 
     [ObservableProperty] private ObservableCollection<ReminderDto> _reminders = new();
     [ObservableProperty] private ObservableCollection<CustomerDto> _customers = new();
-    [ObservableProperty] private ObservableCollection<VehicleDto> _vehicles = new();
+    [ObservableProperty] private ObservableCollection<VehicleDto> _customerVehicles = new();
     [ObservableProperty] private ReminderDto? _selectedReminder;
     [ObservableProperty] private ReminderType _reminderType;
     [ObservableProperty] private DateTime _reminderDate = DateTime.Today;
     [ObservableProperty] private string _message = string.Empty;
     [ObservableProperty] private int _selectedCustomerId;
     [ObservableProperty] private int? _selectedVehicleId;
+
+    private List<VehicleDto> _allVehicles = new();
     [ObservableProperty] private string? _errorMessage;
     [ObservableProperty] private string? _statusMessage;
     [ObservableProperty] private bool _emailConfigured;
@@ -46,7 +48,22 @@ public partial class ReminderViewModel : ObservableObject
     {
         Reminders = new ObservableCollection<ReminderDto>(await _service.GetAllAsync());
         Customers = new ObservableCollection<CustomerDto>(await _customerService.GetAllAsync());
-        Vehicles = new ObservableCollection<VehicleDto>(await _vehicleService.GetAllAsync());
+        _allVehicles = (await _vehicleService.GetAllAsync()).ToList();
+        FilterVehiclesForCustomer();
+    }
+
+    partial void OnSelectedCustomerIdChanged(int value)
+    {
+        SelectedVehicleId = null;
+        FilterVehiclesForCustomer();
+    }
+
+    private void FilterVehiclesForCustomer()
+    {
+        if (SelectedCustomerId > 0)
+            CustomerVehicles = new ObservableCollection<VehicleDto>(_allVehicles.Where(v => v.CustomerId == SelectedCustomerId));
+        else
+            CustomerVehicles = new ObservableCollection<VehicleDto>();
     }
 
     [RelayCommand]

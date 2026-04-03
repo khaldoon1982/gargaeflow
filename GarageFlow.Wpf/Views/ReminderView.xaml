@@ -14,10 +14,39 @@
 
                 <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,8,8"><Label Content="Type"/><ComboBox ItemsSource="{Binding ReminderTypes}" SelectedItem="{Binding ReminderType}"/></StackPanel>
                 <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,8,8"><Label Content="Datum"/><DatePicker SelectedDate="{Binding ReminderDate}"/></StackPanel>
-                <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,8"><Label Content="Klant *"/><ComboBox ItemsSource="{Binding Customers}" SelectedValue="{Binding SelectedCustomerId}" SelectedValuePath="Id" DisplayMemberPath="DisplayName"/></StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,8">
+                    <Label Content="Klant *"/>
+                    <ComboBox ItemsSource="{Binding Customers}" SelectedValue="{Binding SelectedCustomerId}" SelectedValuePath="Id">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <Run Text="{Binding DisplayName}"/>
+                                    <Run Text=" (" Foreground="#757575"/>
+                                    <Run Text="{Binding VehicleCount}" Foreground="#757575"/>
+                                    <Run Text=" voertuig(en))" Foreground="#757575"/>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
 
                 <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,8,8"><Label Content="Bericht *"/><TextBox Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,8"><Label Content="Voertuig"/><ComboBox ItemsSource="{Binding Vehicles}" SelectedValue="{Binding SelectedVehicleId}" SelectedValuePath="Id" DisplayMemberPath="PlateNumberOriginal"/></StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,8">
+                    <Label Content="Voertuig"/>
+                    <ComboBox ItemsSource="{Binding CustomerVehicles}" SelectedValue="{Binding SelectedVehicleId}" SelectedValuePath="Id">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <Run Text="{Binding PlateNumberOriginal}"/>
+                                    <Run Text=" — "/>
+                                    <Run Text="{Binding Brand}"/>
+                                    <Run Text=" "/>
+                                    <Run Text="{Binding Model}"/>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
 
                 <!-- Action buttons -->
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,8,0,0">
