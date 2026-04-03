@@ -21,7 +21,6 @@ public partial class App : System.Windows.Application
 
     public App()
     {
-        // Load .env.local for configuration
         var envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env.local");
         if (!File.Exists(envPath))
             envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env.local");
@@ -42,7 +41,6 @@ public partial class App : System.Windows.Application
                 services.AddPersistence($"Data Source={DbPath}");
                 services.AddInfrastructure(DbPath);
 
-                // ViewModels
                 services.AddTransient<LoginViewModel>();
                 services.AddTransient<MainViewModel>();
                 services.AddTransient<DashboardViewModel>();
@@ -54,7 +52,6 @@ public partial class App : System.Windows.Application
                 services.AddTransient<SettingsViewModel>();
                 services.AddTransient<BackupViewModel>();
 
-                // Views
                 services.AddTransient<LoginWindow>();
                 services.AddTransient<MainWindow>();
             })
@@ -63,19 +60,22 @@ public partial class App : System.Windows.Application
 
     protected override async void OnStartup(StartupEventArgs e)
     {
-        await _host.StartAsync();
-
-        using (var scope = _host.Services.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<GarageFlowDbContext>();
-            var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-            await DatabaseSeeder.SeedAsync(dbContext, hasher.Hash);
-        }
-
+        // Show login window IMMEDIATELY — don't block on host/db
         var loginWindow = _host.Services.GetRequiredService<LoginWindow>();
         loginWindow.Show();
 
         base.OnStartup(e);
+
+        // Heavy work in background — user sees the login screen instantly
+        await Task.Run(async () =>
+        {
+            await _host.StartAsync();
+
+            using var scope = _host.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<GarageFlowDbContext>();
+            var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+            await DatabaseSeeder.SeedAsync(dbContext, hasher.Hash);
+        });
     }
 
     protected override async void OnExit(ExitEventArgs e)

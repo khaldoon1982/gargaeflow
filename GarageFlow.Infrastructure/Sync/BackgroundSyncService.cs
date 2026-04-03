@@ -41,7 +41,8 @@ public class BackgroundSyncService : IHostedService, IDisposable
 
     private async Task RunAsync(CancellationToken ct)
     {
-        await Task.Delay(TimeSpan.FromSeconds(5), ct);
+        // Wait for app to fully initialize before first sync attempt
+        await Task.Delay(TimeSpan.FromSeconds(15), ct);
 
         while (await _timer!.WaitForNextTickAsync(ct))
         {
