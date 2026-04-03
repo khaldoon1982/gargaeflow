@@ -78,6 +78,12 @@ public partial class CustomerViewModel : ObservableObject
     [ObservableProperty] private string? _vehicleNotes;
     [ObservableProperty] private string? _vehicleErrorMessage;
 
+    // Customer financials
+    [ObservableProperty] private decimal _customerTotalSpent;
+    [ObservableProperty] private int _customerTotalServices;
+    [ObservableProperty] private DateTime? _customerFirstVisit;
+    [ObservableProperty] private DateTime? _customerLastVisit;
+
     public bool IsBusiness => CustomerType == CustomerType.Business;
     public Array FuelTypes => Enum.GetValues(typeof(FuelType));
     public Array TransmissionTypes => Enum.GetValues(typeof(TransmissionType));
@@ -139,11 +145,18 @@ public partial class CustomerViewModel : ObservableObject
         var vIds = CustomerVehicles.Select(v => v.Id).ToHashSet();
 
         var allM = await _maintenanceService.GetAllAsync();
-        CustomerMaintenance = new ObservableCollection<MaintenanceRecordDto>(allM.Where(m => vIds.Contains(m.VehicleId)));
+        var custMaintenance = allM.Where(m => vIds.Contains(m.VehicleId)).ToList();
+        CustomerMaintenance = new ObservableCollection<MaintenanceRecordDto>(custMaintenance);
         var allI = await _inspectionService.GetAllAsync();
         CustomerInspections = new ObservableCollection<InspectionDto>(allI.Where(i => vIds.Contains(i.VehicleId)));
         var allR = await _reminderService.GetAllAsync();
         CustomerReminders = new ObservableCollection<ReminderDto>(allR.Where(r => r.CustomerId == customerId));
+
+        // Financial summary
+        CustomerTotalSpent = custMaintenance.Sum(m => m.TotalCost);
+        CustomerTotalServices = custMaintenance.Count;
+        CustomerFirstVisit = custMaintenance.OrderBy(m => m.ServiceDate).FirstOrDefault()?.ServiceDate;
+        CustomerLastVisit = custMaintenance.OrderByDescending(m => m.ServiceDate).FirstOrDefault()?.ServiceDate;
     }
 
     [RelayCommand] private async Task Search() => await RefreshList();

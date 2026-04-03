@@ -61,6 +61,36 @@
                     </StackPanel>
                 </Border>
 
+                <!-- Financial Summary -->
+                <Border Style="{StaticResource Card}" Margin="0,0,0,10" Visibility="{Binding IsNewCustomer, Converter={StaticResource InvertBoolToVisConverter}}">
+                    <WrapPanel>
+                        <Border Background="#E8F5E9" CornerRadius="6" Padding="14,8" Margin="0,0,10,4">
+                            <StackPanel>
+                                <TextBlock Text="Totale besteding" FontSize="10" Foreground="{StaticResource SubtextBrush}"/>
+                                <TextBlock Text="{Binding CustomerTotalSpent, StringFormat=€{0:N2}}" FontSize="20" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="#E3F2FD" CornerRadius="6" Padding="14,8" Margin="0,0,10,4">
+                            <StackPanel>
+                                <TextBlock Text="Totaal onderhoud" FontSize="10" Foreground="{StaticResource SubtextBrush}"/>
+                                <TextBlock Text="{Binding CustomerTotalServices}" FontSize="20" FontWeight="Bold" Foreground="{StaticResource InfoBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="#FFF3E0" CornerRadius="6" Padding="14,8" Margin="0,0,10,4">
+                            <StackPanel>
+                                <TextBlock Text="Eerste bezoek" FontSize="10" Foreground="{StaticResource SubtextBrush}"/>
+                                <TextBlock Text="{Binding CustomerFirstVisit, StringFormat=dd-MM-yyyy, TargetNullValue=—}" FontSize="14" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="#FFF3E0" CornerRadius="6" Padding="14,8" Margin="0,0,0,4">
+                            <StackPanel>
+                                <TextBlock Text="Laatste bezoek" FontSize="10" Foreground="{StaticResource SubtextBrush}"/>
+                                <TextBlock Text="{Binding CustomerLastVisit, StringFormat=dd-MM-yyyy, TargetNullValue=—}" FontSize="14" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+                    </WrapPanel>
+                </Border>
+
                 <!-- Klanttype -->
                 <Border Style="{StaticResource Card}" Margin="0,0,0,10">
                     <StackPanel>
@@ -197,17 +227,29 @@
 
                     <!-- Onderhoud -->
                     <TabItem Header="Onderhoud">
-                        <DataGrid ItemsSource="{Binding CustomerMaintenance}" Margin="8" MaxHeight="300">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Datum" Binding="{Binding ServiceDate, StringFormat=dd-MM-yyyy}" Width="90"/>
-                                <DataGridTextColumn Header="Kenteken" Binding="{Binding VehiclePlate}" Width="90"/>
-                                <DataGridTextColumn Header="Type" Binding="{Binding ServiceType}" Width="100"/>
-                                <DataGridTextColumn Header="Beschrijving" Binding="{Binding Description}" Width="*"/>
-                                <DataGridTextColumn Header="Monteur" Binding="{Binding TechnicianName}" Width="100"/>
-                                <DataGridTextColumn Header="Kosten" Binding="{Binding TotalCost, StringFormat=€{0:F2}}" Width="80"/>
-                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="90"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
+                        <StackPanel Margin="8">
+                            <WrapPanel Margin="0,0,0,8">
+                                <Border Background="#E8F5E9" CornerRadius="4" Padding="10,4" Margin="0,0,8,0">
+                                    <TextBlock FontSize="12"><Run Text="Totaal: " Foreground="{StaticResource SubtextBrush}"/><Run Text="{Binding CustomerTotalSpent, StringFormat=€{0:N2}, Mode=OneWay}" FontWeight="Bold"/></TextBlock>
+                                </Border>
+                                <Border Background="#E3F2FD" CornerRadius="4" Padding="10,4">
+                                    <TextBlock FontSize="12"><Run Text="Registraties: " Foreground="{StaticResource SubtextBrush}"/><Run Text="{Binding CustomerTotalServices, Mode=OneWay}" FontWeight="Bold"/></TextBlock>
+                                </Border>
+                            </WrapPanel>
+                            <DataGrid ItemsSource="{Binding CustomerMaintenance}" MaxHeight="300">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Datum" Binding="{Binding ServiceDate, StringFormat=dd-MM-yyyy}" Width="90"/>
+                                    <DataGridTextColumn Header="Kenteken" Binding="{Binding VehiclePlate}" Width="90"/>
+                                    <DataGridTextColumn Header="Type" Binding="{Binding ServiceType}" Width="100"/>
+                                    <DataGridTextColumn Header="Beschrijving" Binding="{Binding Description}" Width="*"/>
+                                    <DataGridTextColumn Header="Monteur" Binding="{Binding TechnicianName}" Width="100"/>
+                                    <DataGridTextColumn Header="Arbeid" Binding="{Binding LaborCost, StringFormat=€{0:F2}}" Width="70"/>
+                                    <DataGridTextColumn Header="Onderdelen" Binding="{Binding PartsCost, StringFormat=€{0:F2}}" Width="80"/>
+                                    <DataGridTextColumn Header="Totaal" Binding="{Binding TotalCost, StringFormat=€{0:F2}}" Width="70"/>
+                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="80"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
                     </TabItem>
 
                     <!-- Keuringen -->

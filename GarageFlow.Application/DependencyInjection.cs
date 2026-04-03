@@ -18,6 +18,8 @@ public static class DependencyInjection
         services.AddScoped<IPartService, PartService>();
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<ISettingsService, SettingsService>();
+        services.AddScoped<IGlobalSearchService, GlobalSearchService>();
+        services.AddScoped<IVehicleHistoryService, VehicleHistoryService>();
 
         services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection));
 

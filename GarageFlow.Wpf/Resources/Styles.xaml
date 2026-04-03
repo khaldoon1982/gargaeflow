@@ -10,6 +10,7 @@
     <conv:InvertBoolToVisConverter x:Key="InvertBoolToVisConverter"/>
     <conv:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
     <conv:BoolToColorConverter x:Key="BoolToColorConverter"/>
+    <conv:NullToVisibleConverter x:Key="NullToVisibleConverter"/>
 
     <!-- Colors -->
     <Color x:Key="PrimaryColor">#1B5E20</Color>
