@@ -17,10 +17,15 @@ public static class DependencyInjection
         // Sync
         var syncConfig = SyncConfiguration.FromEnvironment();
         services.AddSingleton(syncConfig);
-
         services.AddHttpClient<ISyncApiClient, SyncApiClient>();
         services.AddScoped<ISyncService, SyncService>();
         services.AddHostedService<BackgroundSyncService>();
+
+        // Email (Resend)
+        services.AddHttpClient<IEmailService, ResendEmailService>();
+
+        // Google Calendar
+        services.AddSingleton<ICalendarService, GoogleCalendarService>();
 
         return services;
     }

@@ -8,6 +8,8 @@
     <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     <conv:EnumBoolConverter x:Key="EnumBoolConverter"/>
     <conv:InvertBoolToVisConverter x:Key="InvertBoolToVisConverter"/>
+    <conv:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
+    <conv:BoolToColorConverter x:Key="BoolToColorConverter"/>
 
     <!-- Colors -->
     <Color x:Key="PrimaryColor">#1B5E20</Color>
